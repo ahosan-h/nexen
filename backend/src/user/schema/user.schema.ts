@@ -10,7 +10,7 @@ export class User extends Document {
   email!: string;
 
   @Prop({ trim: true })
-  name!: string;
+  username!: string;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);
