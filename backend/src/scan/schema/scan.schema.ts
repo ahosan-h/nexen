@@ -3,22 +3,22 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Scan extends Document {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, trim: true })
   qrcode!: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   name!: string;
 
   @Prop({ required: true })
-  price!: string;
+  price!: number;
 
   @Prop({ required: true })
   quantity!: number;
 
-  @Prop()
+  @Prop({ required: true })
   description!: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, trim: true })
   addedby!: string;
 }
 
