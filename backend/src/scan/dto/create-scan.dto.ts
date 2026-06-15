@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
 
-export class createScanDto {
+export class CreateScanDto {
   @IsString()
   qrcode!: string;
 
