@@ -10,7 +10,7 @@ export class createScanDto {
   @IsNumber()
   price!: number;
 
-  @IsString()
+  @IsNumber()
   quantity!: number;
 
   @IsString()

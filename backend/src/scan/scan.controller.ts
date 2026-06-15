@@ -11,7 +11,7 @@ export class ScanController {
     return this.scanService.createProduct(dto);
   }
 
-  @Get()
+  @Get(':qrcode')
   getProduct(@Param('qrcode') qrcode: string) {
     return this.scanService.findProduct(qrcode);
   }
