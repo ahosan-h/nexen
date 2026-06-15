@@ -2,7 +2,7 @@ import { Scan } from './schema/scan.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { CreateScanDto } from './dto/create-scan.dto';
+import { createScanDto } from './dto/create-scan.dto';
 
 @Injectable()
 export class ScanService {
@@ -12,7 +12,7 @@ export class ScanService {
     return this.scanModel.findOne({ qrcode });
   }
 
-  async createProduct(dto: CreateScanDto) {
+  async createProduct(dto: createScanDto) {
     const existProduct = await this.findByQrCode(dto.qrcode);
 
     if (existProduct) {
