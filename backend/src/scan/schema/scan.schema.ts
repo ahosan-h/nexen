@@ -3,6 +3,9 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Scan extends Document {
+  @Prop({ required: true })
+  userId!: string;
+
   @Prop({ required: true, unique: true, trim: true })
   qrcode!: string;
 
@@ -15,7 +18,7 @@ export class Scan extends Document {
   @Prop({ required: true })
   quantity!: number;
 
-  @Prop({ required: true })
+  @Prop()
   description!: string;
 
   @Prop({ required: true, trim: true })

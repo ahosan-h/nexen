@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class createScanDto {
   @IsString()
@@ -14,7 +14,8 @@ export class createScanDto {
   quantity!: number;
 
   @IsString()
-  description!: string;
+  @IsOptional()
+  description?: string;
 
   @IsString()
   addedby!: string;

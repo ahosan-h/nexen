@@ -12,14 +12,14 @@ export class ScanService {
     return this.scanModel.findOne({ qrcode });
   }
 
-  async createProduct(dto: createScanDto) {
+  async createProduct(userId: string, dto: createScanDto) {
     const existProduct = await this.findByQrCode(dto.qrcode);
 
     if (existProduct) {
       throw new ConflictException('Product with this QR code already exists');
     }
 
-    return this.scanModel.create(dto);
+    return this.scanModel.create({ ...dto, userId });
   }
 
   findProduct(qrcode: string) {
