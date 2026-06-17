@@ -8,21 +8,21 @@ import { createScanDto } from './dto/create-scan.dto';
 export class ScanService {
   constructor(@InjectModel(Scan.name) private scanModel: Model<Scan>) {}
 
-  async findByQrCode(qrcode: string) {
-    return this.scanModel.findOne({ qrcode });
+  async findByBarCode(barcode: string) {
+    return this.scanModel.findOne({ barcode });
   }
 
   async createProduct(userId: string, dto: createScanDto) {
-    const existProduct = await this.findByQrCode(dto.qrcode);
+    const existProduct = await this.findByBarCode(dto.barcode);
 
     if (existProduct) {
-      throw new ConflictException('Product with this QR code already exists');
+      throw new ConflictException('Product with this Bar code already exists');
     }
 
     return this.scanModel.create({ ...dto, userId });
   }
 
-  findProduct(qrcode: string) {
-    return this.findByQrCode(qrcode);
+  findProduct(barcode: string) {
+    return this.findByBarCode(barcode);
   }
 }

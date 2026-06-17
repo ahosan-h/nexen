@@ -7,7 +7,7 @@ export class Scan extends Document {
   userId!: string;
 
   @Prop({ required: true, unique: true, trim: true })
-  qrcode!: string;
+  barcode!: string;
 
   @Prop({ required: true, trim: true })
   name!: string;

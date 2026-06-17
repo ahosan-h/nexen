@@ -22,9 +22,9 @@ export class ScanController {
     return this.scanService.createProduct(req.user.clerkId, dto);
   }
 
-  @Get(':qrcode')
+  @Get(':barcode')
   @UseGuards(ClerkAuthGuard)
-  getProduct(@Param('qrcode') qrcode: string) {
-    return this.scanService.findProduct(qrcode);
+  getProduct(@Param('barcode') barcode: string) {
+    return this.scanService.findProduct(barcode);
   }
 }

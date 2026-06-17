@@ -2,7 +2,7 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class createScanDto {
   @IsString()
-  qrcode!: string;
+  barcode!: string;
 
   @IsString()
   name!: string;
