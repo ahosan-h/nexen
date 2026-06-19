@@ -16,9 +16,9 @@ async function bootstrap() {
       const allowedOrigins = [
         //for froduction
         'http://localhost:3000',
-        'http://localhost:2323',
+        'http://localhost:1128',
 
-        'http://192.168.0.100:2323',
+        'http://192.168.0.100:1128',
 
         'https://573d34ff-3000.inc1.devtunnels.ms',
       ];
@@ -59,7 +59,7 @@ async function bootstrap() {
     }),
   );
 
-  const PORT = process.env.PORT ?? 4444;
+  const PORT = process.env.PORT ?? 4445;
 
   await app.listen(PORT);
 

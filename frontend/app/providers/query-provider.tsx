@@ -1,0 +1,1 @@
+// providers/query-provider.tsx
