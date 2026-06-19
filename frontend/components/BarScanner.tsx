@@ -4,7 +4,11 @@
 import { useEffect } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 
-export default function BarScanner() {
+type Props = {
+  onScan: (code: string) => void;
+};
+
+export default function BarScanner({ onScan }: Props) {
   useEffect(() => {
     const scanner = new Html5QrcodeScanner(
       "reader",
@@ -19,7 +23,7 @@ export default function BarScanner() {
     );
 
     const onScanSuccess = (decodedText: string, decodedResult: string) => {
-      console.log("Code matched =", decodedText, decodedResult);
+      onScan(decodedText);
 
       // Optional: stop scanning after successful scan
       scanner.clear().catch(console.error);
@@ -35,7 +39,7 @@ export default function BarScanner() {
     return () => {
       scanner.clear().catch(console.error);
     };
-  }, []);
+  }, [onScan]);
 
   return <div id="reader" />;
 }
