@@ -5,6 +5,8 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ScanModule } from './scan/scan.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -26,6 +28,10 @@ import { ScanModule } from './scan/scan.module';
     UserModule,
 
     ScanModule,
+
+    InventoryModule,
+
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
