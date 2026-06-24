@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 
 //it will verify the user if he is sign-ined or not
 export default function SyncUser() {
-  const { getToken, isSignedIn, isLoaded } = useAuth();
+  const { getToken, isSignedIn, isLoaded: clerkLoaded } = useAuth();
   const [isloaded, setIsloaded] = useState(true);
   const [token, setToken] = useState<string | null>(null);
-
+ 
   useEffect(() => {
     async function fetchtoken() {
-      if (isLoaded && isSignedIn) {
+
+      if (clerkLoaded && isSignedIn) {
         try {
           const token = await getToken();
           setToken(token);
@@ -20,15 +21,15 @@ export default function SyncUser() {
         } finally {
           setIsloaded(false);
         }
-      } else if (isloaded && !isSignedIn) {
+      } else if (clerkLoaded && !isSignedIn) {
         setIsloaded(false);
       }
     }
     fetchtoken();
-  }, [isSignedIn, getToken, isLoaded]);
+  }, [isSignedIn, getToken, clerkLoaded]);
   return {
     isSignedIn,
-    isloaded: isloaded,
+    isLoaded: clerkLoaded && !isloaded,
     token,
   };
 }
