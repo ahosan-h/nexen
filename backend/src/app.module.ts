@@ -7,6 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ScanModule } from './scan/scan.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { OrderModule } from './order/order.module';
+import { AnalyticsController } from './analytics/analytics.controller';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -32,8 +34,10 @@ import { OrderModule } from './order/order.module';
     InventoryModule,
 
     OrderModule,
+
+    AnalyticsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, AnalyticsController],
   providers: [AppService],
 })
 export class AppModule {}
