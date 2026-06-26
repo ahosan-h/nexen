@@ -25,4 +25,9 @@ export class ScanService {
   findProduct(barcode: string) {
     return this.findByBarCode(barcode);
   }
+  //get all product
+  async getallproduct() {
+    const gtall = await this.scanModel.find({}).exec();
+    return gtall;
+  }
 }

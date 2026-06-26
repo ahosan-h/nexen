@@ -15,7 +15,11 @@ import { ClerkAuthGuard } from 'src/auth/guard/auth.guard';
 @Controller('scan')
 export class ScanController {
   constructor(private scanService: ScanService) {}
-
+  @Get('products')
+  @UseGuards(ClerkAuthGuard)
+  getallproduct() {
+    return this.scanService.getallproduct();
+  }
   @Post()
   @UseGuards(ClerkAuthGuard)
   create(@Body() dto: createScanDto, @Req() req: AuthRequest) {
