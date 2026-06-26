@@ -14,7 +14,7 @@ export default function Productpage() {
   const [productlist, setProductlist] = useState<product_details[]>([]);
 
   useEffect(() => {
-if (!isLoaded || !token) {
+    if (!isLoaded || !token) {
       return;
     }
     async function fetchproduct() {
@@ -33,7 +33,7 @@ if (!isLoaded || !token) {
       }
     }
     fetchproduct();
-  }, [token,isLoaded]);
+  }, [token, isLoaded]);
   if (!isLoaded) {
     return <p> token is loading </p>;
   }
@@ -43,7 +43,6 @@ if (!isLoaded || !token) {
   return productlist.map((ele) => (
     <div key={ele._id} className="flex g-2 px-2 py-4">
       <ProductCrad title={ele.name} price={ele.price} quantity={ele.quantity} />
-      
     </div>
   ));
 }
