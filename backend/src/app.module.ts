@@ -9,6 +9,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { OrderModule } from './order/order.module';
 import { AnalyticsController } from './analytics/analytics.controller';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ExpanddmgModule } from './expanddmg/expanddmg.module';
 
 @Module({
   imports: [
@@ -36,6 +37,8 @@ import { AnalyticsModule } from './analytics/analytics.module';
     OrderModule,
 
     AnalyticsModule,
+
+    ExpanddmgModule,
   ],
   controllers: [AppController, AnalyticsController],
   providers: [AppService],

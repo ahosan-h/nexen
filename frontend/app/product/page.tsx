@@ -7,6 +7,7 @@ interface product_details {
 }
 import ProductCrad from "@/components/card";
 import SyncUser from "@/components/SyncUser";
+import { UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 
 export default function Productpage() {
@@ -43,6 +44,7 @@ export default function Productpage() {
   return productlist.map((ele) => (
     <div key={ele._id} className="flex g-2 px-2 py-4">
       <ProductCrad title={ele.name} price={ele.price} quantity={ele.quantity} />
+    <UserButton/>
     </div>
   ));
 }

@@ -14,6 +14,7 @@ export class UserController {
     return this.userService.createUser({
       clerkId: req.user.clerkId,
       email: body.email,
+      username: body.username,
     });
   }
 
