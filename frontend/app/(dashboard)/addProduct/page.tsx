@@ -11,7 +11,7 @@ const BarScanner = dynamic(() => import("@/components/BarScanner"), {
   ssr: false,
 });
 
-export default function ScanPage() {
+export default function AddProductPage() {
   const [barcode, setBarcode] = useState("");
 
   const { getToken, isSignedIn } = useAuth();
@@ -62,7 +62,7 @@ export default function ScanPage() {
   };
 
   return (
-    <div className="p-6 background-black h-screen">
+    <div className="p-6 h-screen">
       {!barcode ? (
         <>
           <BarScanner onScan={setBarcode} />
