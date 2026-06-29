@@ -57,17 +57,17 @@ export default function ScanPage() {
       reset();
       setBarcode("");
     } catch (error) {
-      console.error(error);
-      alert("Failed to save product");
+      console.log(error);
     }
   };
 
   return (
-    <div className="p-6">
-      <BarScanner onScan={setBarcode} />
-
+    <div className="p-6 background-black h-screen">
       {!barcode ? (
-        <p className="mt-4">Scan a barcode...</p>
+        <>
+          <BarScanner onScan={setBarcode} />
+          <p className="mt-4">Scan a barcode...</p>
+        </>
       ) : (
         <form
           onSubmit={handleSubmit(onSubmit)}
