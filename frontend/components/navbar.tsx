@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-// import { Sidebar } from "./sidebar";
+import { Sidebar } from "./sidebar";
 
 export function Navbar() {
   const { isSignedIn } = useUser();
@@ -38,8 +38,8 @@ export function Navbar() {
       <div className="h-16 flex items-center justify-between px-3 md:px-5 lg:px-6">
         {/* Left */}
         <div className="flex items-center gap-3 shrink-0">
-          {/* <Sidebar /> */}
-          <span>NexEn</span>
+          <Sidebar />
+          <span className="text-2xl">NexEn</span>
         </div>
 
         {/* Desktop / Tablet Search */}
