@@ -62,7 +62,7 @@ export default function ScanPage() {
   };
 
   return (
-    <div className="p-6 background-black h-screen">
+    <div className="p-6 h-screen">
       {!barcode ? (
         <>
           <BarScanner onScan={setBarcode} />
