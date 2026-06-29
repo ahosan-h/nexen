@@ -57,5 +57,6 @@ export default function SyncUser() {
     isSignedIn,
     isLoaded: clerkLoaded && !isloaded,
     token,
+    username: user,
   };
 }

@@ -1,12 +1,12 @@
-import { Prop } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
-import { Scan } from 'src/scan/schema/scan.schema';
-
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
+@Schema({ timestamps: true })
 export class expireModel extends Document {
   @Prop({ required: true })
   catagory!: string;
   @Prop({ required: true })
-  name!: true;
+  name!: string;
   @Prop({ required: true })
   reportedby!: string;
 }
+export const expireSchema = SchemaFactory.createForClass(expireModel);
