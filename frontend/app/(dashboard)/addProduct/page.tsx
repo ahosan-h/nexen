@@ -6,6 +6,16 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "@clerk/nextjs";
 import { ScanService } from "@/service/scan.service";
 import { createScanDto } from "@/types/scan";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupTextarea,
+} from "@/components/ui/input-group";
+import { Files, Save, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const BarScanner = dynamic(() => import("@/components/BarScanner"), {
   ssr: false,
@@ -40,7 +50,9 @@ export default function AddProductPage() {
       const payload: createScanDto = {
         barcode,
         name: data.name,
-        price: data.price,
+        bprice: data.bprice,
+        sprice: data.sprice,
+
         quantity: data.quantity,
         description: data.description,
         addedby: data.addedby,
@@ -62,102 +74,158 @@ export default function AddProductPage() {
   };
 
   return (
-    <div className="p-6 h-screen">
+    <div className="p-6 flex items-center justify-center ">
       {!barcode ? (
-        <>
+        <div className="flex items-center justify-center w-full flex-col">
           <BarScanner onScan={setBarcode} />
-          <p className="mt-4">Scan a barcode...</p>
-        </>
+          <p className="mt-4">Scan a barcode for add Product</p>
+        </div>
       ) : (
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="mt-6 flex flex-col gap-4 max-w-md"
         >
-          <div>
-            <label className="block mb-1">Barcode</label>
+          <FieldGroup>
+            <div className="flex flex-col md:flex-row gap-4 ">
+              <Field>
+                <FieldLabel htmlFor="barcode">Barcode</FieldLabel>
 
-            <div className="flex gap-2">
-              <input value={barcode} readOnly />
+                <InputGroup>
+                  <InputGroupInput id="barcode" value={barcode} readOnly />
+                  <InputGroupAddon align="inline-end">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(barcode);
+                        toast.success("Barcode copied");
+                      }}
+                    >
+                      <Files className="size-4" />
+                    </Button>
+                  </InputGroupAddon>
+                </InputGroup>
+              </Field>
 
-              <button
-                type="button"
-                className="border rounded px-3"
-                onClick={() => navigator.clipboard.writeText(barcode)}
-              >
-                Copy
-              </button>
+              <Field>
+                <FieldLabel htmlFor="name">Name</FieldLabel>
+
+                <InputGroup>
+                  <InputGroupInput
+                    type="text"
+                    id="name"
+                    placeholder="Enter product name"
+                    {...register("name", {
+                      required: "Product name is required",
+                    })}
+                  />
+                </InputGroup>
+
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                )}
+              </Field>
             </div>
+            <div className="flex flex-col md:flex-row gap-4 ">
+              <Field>
+                <FieldLabel htmlFor="bprice">Buying Price</FieldLabel>
+
+                <InputGroup>
+                  <InputGroupInput
+                    type="number"
+                    id="bprice"
+                    placeholder="Enter buying price"
+                    {...register("bprice", {
+                      required: "Product Buying Price is required",
+                    })}
+                  />
+                </InputGroup>
+
+                {errors.bprice && (
+                  <p className="text-sm text-red-500">
+                    {errors.bprice.message}
+                  </p>
+                )}
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="selling">Selling Price</FieldLabel>
+
+                <InputGroup>
+                  <InputGroupInput
+                    id="selling"
+                    type="number"
+                    placeholder="Enter selling price"
+                    {...register("sprice", {
+                      required: "Product selling price is required",
+                    })}
+                  />
+                </InputGroup>
+
+                {errors.sprice && (
+                  <p className="text-sm text-red-500">
+                    {errors.sprice.message}
+                  </p>
+                )}
+              </Field>
+            </div>
+            <Field>
+              <FieldLabel htmlFor="discreption">Description</FieldLabel>
+              <InputGroup className="h-40">
+                <InputGroupTextarea
+                  id="discreption"
+                  placeholder="Provide details about this product..."
+                  {...register("description")}
+                />
+              </InputGroup>
+            </Field>{" "}
+          </FieldGroup>
+
+          <div className="flex flex-col md:flex-row gap-4 ">
+            <Field>
+              <FieldLabel htmlFor="quantity">Quantity</FieldLabel>
+
+              <InputGroup>
+                <InputGroupInput
+                  type="number"
+                  id="quantity"
+                  placeholder="Enter quantity"
+                  {...register("quantity", {
+                    required: "Product quantity is required",
+                  })}
+                />
+              </InputGroup>
+
+              {errors.quantity && (
+                <p className="text-sm text-red-500">
+                  {errors.quantity.message}
+                </p>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="addedby">Added By</FieldLabel>
+
+              <InputGroup>
+                <InputGroupInput
+                  id="selling"
+                  type="text"
+                  placeholder="Enter added by"
+                  {...register("addedby", {
+                    required: "Please enter who added this item",
+                  })}
+                />
+              </InputGroup>
+
+              {errors.addedby && (
+                <p className="text-sm text-red-500">{errors.addedby.message}</p>
+              )}
+            </Field>
           </div>
 
-          <div>
-            <label>Product Name</label>
-
-            <input
-              {...register("name", {
-                required: "Product name is required",
-              })}
-            />
-
-            {errors.name && (
-              <p className="text-red-500">{errors.name.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label>Price</label>
-
-            <input
-              type="number"
-              {...register("price", {
-                required: "Price is required",
-                valueAsNumber: true,
-              })}
-            />
-
-            {errors.price && (
-              <p className="text-red-500">{errors.price.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label>Quantity</label>
-
-            <input
-              type="number"
-              {...register("quantity", {
-                required: "Quantity is required",
-                valueAsNumber: true,
-              })}
-            />
-
-            {errors.quantity && (
-              <p className="text-red-500">{errors.quantity.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label>Description</label>
-
-            <textarea rows={4} {...register("description")} />
-          </div>
-
-          <div>
-            <label>Added By</label>
-
-            <input
-              {...register("addedby", {
-                required: "Added By is required",
-              })}
-            />
-
-            {errors.addedby && (
-              <p className="text-red-500">{errors.addedby.message}</p>
-            )}
-          </div>
-
-          <button type="submit" disabled={isSubmitting}>
+          <Button className="h-12" type="submit" disabled={isSubmitting}>
+            <Send />
             {isSubmitting ? "Saving..." : "Save Product"}
-          </button>
+          </Button>
         </form>
       )}
     </div>
