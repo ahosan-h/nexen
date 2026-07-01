@@ -7,10 +7,9 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-  InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import { Files, FileWarningIcon, MoveRight, Send } from "lucide-react";
+import { Files, ImagePlus, Send } from "lucide-react";
 
 export default function DamagePage() {
   return (
@@ -99,7 +98,8 @@ export default function DamagePage() {
               htmlFor="images"
               className="flex items-center justify-center w-full h-40 border-2 border-dashed rounded-md cursor-pointer"
             >
-              <span className="text-gray-500">
+              <span className="flex gap-1 items-center text-gray-500">
+                <ImagePlus size={20} />
                 Click here to choose an image
               </span>
 
@@ -114,8 +114,8 @@ export default function DamagePage() {
 
           <Card className="rounded-xl border bg-black text-white dark:bg-white dark:text-black hover:border-primary transition-all cursor-pointer">
             <CardContent className="flex w-full px-8 sm:w-sm md:w-md flex-col items-center justify-center gap-2">
-              <div className="flex gap-1">
-                <Send />
+              <div className="flex items-center gap-1">
+                <Send size={22} />
                 <p className="text-lg font-medium">Submit Your Report</p>
               </div>
             </CardContent>
