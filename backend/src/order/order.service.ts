@@ -30,7 +30,7 @@ export class OrderService {
       throw new Error('not enough quantity');
     }
     //calculate total
-    const total = findproduct?.price * quantity;
+    const total = findproduct?.bprice * quantity;
 
     //decremnt stock
     const adjust_stock = await this.scanModel.findOneAndUpdate(
