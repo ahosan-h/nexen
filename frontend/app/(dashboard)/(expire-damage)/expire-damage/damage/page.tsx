@@ -23,7 +23,7 @@ export default function DamagePage() {
       ) : (
         <form className="flex w-full max-w-lg">
           <FieldGroup>
-            <div className="flex gap-4">
+            <div className="flex flex-col md:flex-row gap-4 ">
               <Field>
                 <FieldLabel htmlFor="barcode">Barcode</FieldLabel>
 
@@ -45,7 +45,7 @@ export default function DamagePage() {
                 </InputGroup>
               </Field>
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-col md:flex-row gap-4 ">
               <Field>
                 <FieldLabel htmlFor="category">Catagory</FieldLabel>
 
@@ -72,16 +72,16 @@ export default function DamagePage() {
               </Field>
             </div>
             <Field>
-              <FieldLabel htmlFor="discreption">Description</FieldLabel>
+              <FieldLabel htmlFor="description">Description</FieldLabel>
               <InputGroup className="h-40">
                 <InputGroupTextarea
-                  id="discreption"
+                  id="description"
                   placeholder="Provide details about the damage..."
                 />
               </InputGroup>
             </Field>
 
-            <div className="flex gap-4">
+            <div className="flex flex-col md:flex-row gap-4 ">
               <Field>
                 <FieldLabel htmlFor="quantity">Damage Quantity</FieldLabel>
                 <InputGroup>

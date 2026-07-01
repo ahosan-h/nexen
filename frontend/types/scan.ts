@@ -25,7 +25,9 @@ export interface createScanDto {
 
   name: string;
 
-  price: number;
+  bprice: number;
+
+  sprice: number;
 
   quantity: number;
 
