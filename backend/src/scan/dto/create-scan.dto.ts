@@ -8,10 +8,16 @@ export class createScanDto {
   name!: string;
 
   @IsNumber()
-  price!: number;
+  bprice!: number;
+
+  @IsNumber()
+  sprice!: number;
 
   @IsNumber()
   quantity!: number;
+
+  @IsString()
+  catagory!: string;
 
   @IsString()
   @IsOptional()
