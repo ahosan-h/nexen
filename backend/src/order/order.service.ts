@@ -38,6 +38,9 @@ export class OrderService {
 
     //calculate total
     const total = findproduct?.bprice * quantity;
+    //unique bevent id and busines sid for idemopotency
+    const eventid = crypto.randomUUID();
+    const businessid = crypto.randomUUID();
 
     //db writes strat . strat transaction
     const session = await this.connection.startSession();
