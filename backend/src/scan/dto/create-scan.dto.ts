@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class createScanDto {
@@ -7,12 +8,15 @@ export class createScanDto {
   @IsString()
   name!: string;
 
+  @Type(() => Number)
   @IsNumber()
   bprice!: number;
 
+  @Type(() => Number)
   @IsNumber()
   sprice!: number;
 
+  @Type(() => Number)
   @IsNumber()
   quantity!: number;
 
