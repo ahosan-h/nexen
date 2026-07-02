@@ -7,11 +7,15 @@ export interface Scan {
 
   name: string;
 
-  price: number;
+  bprice: number;
+
+  sprice: number;
 
   quantity: number;
 
   description: string;
+
+  category: string;
 
   addedby: string;
 
@@ -32,6 +36,8 @@ export interface createScanDto {
   quantity: number;
 
   description: string;
+
+  category: string;
 
   addedby: string;
 }

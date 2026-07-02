@@ -13,9 +13,10 @@ import {
   InputGroupInput,
   InputGroupTextarea,
 } from "@/components/ui/input-group";
-import { Files, Save, Send } from "lucide-react";
+import { Files, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ApiError } from "@/lib/api";
 
 const BarScanner = dynamic(() => import("@/components/BarScanner"), {
   ssr: false,
@@ -34,6 +35,7 @@ export default function AddProductPage() {
   } = useForm<createScanDto>();
 
   const onSubmit = async (data: createScanDto) => {
+    console.log("Submitted!", data);
     try {
       if (!isSignedIn) {
         alert("Please sign in first");
@@ -43,7 +45,7 @@ export default function AddProductPage() {
       const token = await getToken();
 
       if (!token) {
-        alert("Unable to get authentication token");
+        toast.error("Unable to get authentication token");
         return;
       }
 
@@ -52,8 +54,8 @@ export default function AddProductPage() {
         name: data.name,
         bprice: data.bprice,
         sprice: data.sprice,
-
         quantity: data.quantity,
+        category: data.category,
         description: data.description,
         addedby: data.addedby,
       };
@@ -64,12 +66,23 @@ export default function AddProductPage() {
 
       console.log("Created:", result);
 
-      alert("Product saved successfully");
+      toast.success("Product saved successfully");
 
       reset();
       setBarcode("");
     } catch (error) {
-      console.log(error);
+      if (error instanceof ApiError) {
+        console.log("Status:", error.status);
+        console.log("Response:", error.data);
+
+        toast.error(
+          typeof error.data === "object"
+            ? JSON.stringify(error.data)
+            : error.message,
+        );
+      } else {
+        console.error(error);
+      }
     }
   };
 
@@ -138,6 +151,7 @@ export default function AddProductPage() {
                     placeholder="Enter buying price"
                     {...register("bprice", {
                       required: "Product Buying Price is required",
+                      valueAsNumber: true,
                     })}
                   />
                 </InputGroup>
@@ -158,6 +172,7 @@ export default function AddProductPage() {
                     placeholder="Enter selling price"
                     {...register("sprice", {
                       required: "Product selling price is required",
+                      valueAsNumber: true,
                     })}
                   />
                 </InputGroup>
@@ -181,6 +196,25 @@ export default function AddProductPage() {
             </Field>{" "}
           </FieldGroup>
 
+          <Field>
+            <FieldLabel htmlFor="addedby">Category</FieldLabel>
+
+            <InputGroup>
+              <InputGroupInput
+                id="category"
+                type="text"
+                placeholder="Enter product category"
+                {...register("category", {
+                  required: "Product category is required",
+                })}
+              />
+            </InputGroup>
+
+            {errors.category && (
+              <p className="text-sm text-red-500">{errors.category.message}</p>
+            )}
+          </Field>
+
           <div className="flex flex-col md:flex-row gap-4 ">
             <Field>
               <FieldLabel htmlFor="quantity">Quantity</FieldLabel>
@@ -192,6 +226,7 @@ export default function AddProductPage() {
                   placeholder="Enter quantity"
                   {...register("quantity", {
                     required: "Product quantity is required",
+                    valueAsNumber: true,
                   })}
                 />
               </InputGroup>
