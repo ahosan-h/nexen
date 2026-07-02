@@ -26,7 +26,7 @@ export class OrderService {
     //find the product
     const findproduct = await this.scanModel
       .findOne({ barcode })
-      .select('_id name price quantity');
+      .select('_id name bprice quantity');
     //verify if product exist
     if (!findproduct) {
       throw new Error(' no product found ');
@@ -81,7 +81,7 @@ export class OrderService {
               total,
               productname: findproduct?.name,
             },
-            processed: false,
+            status: 'pending',
           },
           {
             exchange: 'ANALYTICS_EXCHANGE',
@@ -94,7 +94,7 @@ export class OrderService {
               quantity,
               total,
             },
-            processed: false,
+            status: 'pending',
           },
         ],
         { session, ordered: true },

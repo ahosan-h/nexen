@@ -32,7 +32,7 @@ const MAX_RETRY = 5;
         const cloudamqp =
           ConfigService.get<string>('CLOUDAMQP_URL') || 'amqp://localhost:5672';
         const connect = await amqp.connect(cloudamqp);
-        const channel = await connect.createChannel();
+        const channel = await connect.createConfirmChannel();
 
         const dlq_excahange = 'ANALYTICS_DLQ_EXCHANGE';
         const exchange = 'ANALYTICS_EXCHANGE';

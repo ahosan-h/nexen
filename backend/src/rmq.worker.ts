@@ -15,8 +15,8 @@ export class Outboxworker implements OnModuleInit, OnModuleDestroy {
   private isProcessing = false;
 
   constructor(
-    @Inject('ORDER_TOKEN') private readonly orderchannel: amqp.Channel,
-    @Inject('ANALYTICS_TOKEN') private readonly analyticschannel: amqp.Channel,
+    @Inject('ANALYTICS_TOKEN')
+    private readonly analyticschannel: amqp.Channel, // 🟢 Updated type to standard Channel
     @InjectModel(outboxModel.name)
     private readonly outboxDbModel: Model<outboxModel>,
   ) {}
@@ -32,7 +32,7 @@ export class Outboxworker implements OnModuleInit, OnModuleDestroy {
     try {
       // 1. Fetch pending outbox records
       const pullmessage = await this.outboxDbModel
-        .find({ processed: false })
+        .find({ status: 'pending' })
         .limit(25)
         .exec();
 
@@ -46,44 +46,44 @@ export class Outboxworker implements OnModuleInit, OnModuleDestroy {
       // 2. Extract IDs for an atomic batch update
       const msgIds = pullmessage.map((msg) => msg._id);
 
-      // 3. CRITICAL: Mark them processed instantly BEFORE publishing
-      // This locks them so subsequent interval ticks ignore them entirely
+      // 3. Mark them processed instantly BEFORE publishing
       await this.outboxDbModel.updateMany(
         { _id: { $in: msgIds } },
-        { $set: { processed: true } },
+        { $set: { status: 'processing' } },
       );
 
       // 4. Safely broadcast the messages out to RabbitMQ
       for (const msg of pullmessage) {
         try {
-          const activechannel =
-            msg.exchange === 'ANALYTICS_EXCHANGE'
-              ? this.analyticschannel
-              : this.orderchannel;
-
-          activechannel.publish(
+          // 🟢 Fire-and-forget publication (Instant transfer over standard channel socket)
+          this.analyticschannel.publish(
             msg.exchange,
             msg.routingKey,
             Buffer.from(JSON.stringify(msg.payload)),
             { persistent: true },
           );
-        } catch (publishError) {
-          console.error(
-            `❌ Failed to publish outbox entry ${msg._id}:`,
-            publishError,
-          );
 
-          // Fallback: If publishing totally failed, revert this single item so it retries next tick
+          // 🟢 Because it is a standard channel, it transmits instantly. Mark as 'sent' immediately.
           await this.outboxDbModel.updateOne(
             { _id: msg._id },
-            { $set: { processed: false } },
+            { $set: { status: 'sent' } },
+          );
+        } catch (publishError: any) {
+          console.error(
+            `❌ Failed to publish outbox entry ${msg._id}:`,
+            publishError.message || publishError,
+          );
+
+          // Fallback: Revert this single entry to 'pending' if the socket transmission failed
+          await this.outboxDbModel.updateOne(
+            { _id: msg._id },
+            { $set: { status: 'pending' } },
           );
         }
       }
     } catch (globalError) {
       console.error('❌ Error executing Outbox batch process:', globalError);
-    }
-    {
+    } finally {
       this.isProcessing = false;
     }
   }
