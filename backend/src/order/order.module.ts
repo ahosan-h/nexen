@@ -6,18 +6,22 @@ import { orderModel, orderSchema } from './schema/order.schema';
 import { Scan, ScanSchema } from 'src/scan/schema/scan.schema';
 import * as amqp from 'amqplib';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { outboxModel, outboxSchema } from 'src/schema/outbox.schmea';
+import { Outboxworker } from 'src/rmq.worker';
 @Module({
   imports: [
     ConfigModule,
     MongooseModule.forFeature([
       { name: orderModel.name, schema: orderSchema },
       { name: Scan.name, schema: ScanSchema },
+      { name: outboxModel.name, schema: outboxSchema },
     ]),
   ],
   controllers: [OrderController],
   //modifying module for producing the event
   providers: [
     OrderService,
+    Outboxworker,
     //this one will responsible for inventory_sync
     {
       //custom token for listening for rabbit mq

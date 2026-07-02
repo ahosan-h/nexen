@@ -1,20 +1,33 @@
 import { Inject, Module, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { InventoryController } from './inventory.controller';
 import { InventoryService } from './inventory.service';
-import { MongooseModule } from '@nestjs/mongoose';
+import { InjectModel, MongooseModule } from '@nestjs/mongoose';
 import { orderModel, orderSchema } from 'src/order/schema/order.schema';
 import * as amqp from 'amqplib';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import {
+  processedeventModel,
+  ProcessedEventSchema,
+} from 'src/schema/eventid.schmea';
+import { Model } from 'mongoose';
+
 const dlq_queue_inventor = 'DLQ_INVENTORY';
 const queue_for_inventory = 'INVENTORY_QUEUE';
+const MAX_RETRY = 5;
 @Module({
+  //actually wwe dont need these ehere as we are using outbox pattern
+  //and the inventory is the source of truth
   imports: [
     ConfigModule,
-    MongooseModule.forFeature([{ name: orderModel.name, schema: orderSchema }]),
+    MongooseModule.forFeature([
+      { name: orderModel.name, schema: orderSchema },
+      { name: processedeventModel.name, schema: ProcessedEventSchema },
+    ]),
   ],
   controllers: [InventoryController],
   providers: [
     InventoryService,
+    // ** dont need *** 
     {
       //thi will be consumer for inventory sync on order
 
@@ -67,6 +80,7 @@ const queue_for_inventory = 'INVENTORY_QUEUE';
     },
   ],
 })
+/*
 //whne this module will be executed
 // a live connnction will be staublish with a
 //async function which will consume the evnts
@@ -74,6 +88,8 @@ export class InventoryModule implements OnModuleInit, OnModuleDestroy {
   constructor(
     //inject the token here
     @Inject('INVENTORY_TOKEN') private readonly inventoryChannel: amqp.Channel,
+    @InjectModel(processedeventModel.name)
+    private readonly processedeventModel: Model<processedeventModel>,
     //instant the service
     private readonly inventoryService: InventoryService,
   ) {}
@@ -85,6 +101,31 @@ export class InventoryModule implements OnModuleInit, OnModuleDestroy {
         try {
           //dceode the payload
           const payload_decode_inventory = JSON.parse(msg.content.toString());
+          //check for the duplicated event
+          const { eventId, businessId } = payload_decode_inventory;
+          //if uuid mssing
+          if (!eventId || !businessId) {
+            console.log(`uuid missing for ${payload_decode_inventory}`);
+            this.inventoryChannel.ack(msg);
+          }
+          //if event exist
+          const existevent = await this.processedeventModel.exists({
+            eventId: `inventory_${eventId}`,
+          });
+          const existbusiness = await this.processedeventModel.exists({
+            businessId,
+          });
+          if (existevent) {
+            console.log(' dupli event found');
+            this.inventoryChannel.ack(msg);
+            return;
+          }
+          console.log('creating order: ');
+          //record the event and business uuid
+          await this.processedeventModel.create({
+            eventId: `inventory_${eventId}`,
+            businessId: `inventory_${businessId}`,
+          });
           //call the service method for db operation
           await this.inventoryService.ordertrigger(
             payload_decode_inventory.barcode,
@@ -92,13 +133,45 @@ export class InventoryModule implements OnModuleInit, OnModuleDestroy {
             payload_decode_inventory.total,
             payload_decode_inventory.productname,
           );
+
           //confirm thta consumer recive messgae
           //by acknowledge
           this.inventoryChannel.ack(msg);
         } catch (error) {
           console.log(error);
-          //mark acknowledgement false and sent back for retery
-          this.inventoryChannel.nack(msg, false, false);
+          console.log('starting dlq (inventory_sync)');
+
+          const headers = msg.properties.headers || {};
+          let currtry =
+            typeof headers['x-retry-count'] === 'number'
+              ? headers['x-retry-count']
+              : parseInt(headers['x-retry-count'] || '0', 10);
+
+          if (currtry < MAX_RETRY) {
+            const nxtretry = currtry + 1;
+            console.log(`retrying ${nxtretry}`);
+
+            const buffercont = msg.content;
+            const currhead = msg.properties.headers || {};
+            //retry with delay
+            setTimeout(() => {
+              this.inventoryChannel.sendToQueue(
+                queue_for_inventory,
+                buffercont,
+                {
+                  headers: {
+                    ...currhead,
+                    'x-retry-count': nxtretry,
+                  },
+                },
+              );
+            }, 3000);
+            this.inventoryChannel.ack(msg);
+          } else {
+            console.log(error);
+            //mark acknowledgement false and sent back for retery
+            this.inventoryChannel.nack(msg, false, false);
+          }
         }
       }
     });
@@ -112,4 +185,5 @@ export class InventoryModule implements OnModuleInit, OnModuleDestroy {
     }
   }
 }
-//export class InventoryModule {}
+  */
+export class InventoryModule {}

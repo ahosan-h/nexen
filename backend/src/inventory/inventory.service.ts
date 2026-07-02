@@ -9,18 +9,6 @@ export class InventoryService {
     @InjectModel(orderModel.name)
     private readonly orderModel: Model<orderModel>,
   ) {}
-  async ordertrigger(
-    barcode: string,
-    quantity: number,
-    total: number,
-    productname: string,
-  ) {
-    const createorder = await this.orderModel.create({
-      barcode,
-      quantity,
-      total,
-      productname,
-    });
-    return createorder;
-  }
+  async ordertrigger() {}
 }
+//cretaing order here will create duplicate order

@@ -6,7 +6,7 @@ import { ClerkAuthGuard } from 'src/auth/guard/auth.guard';
 export class OrderController {
   constructor(private readonly orderServie: OrderService) {}
   @Post('/placeorder/:barcode')
-  @UseGuards(ClerkAuthGuard)
+  // @UseGuards(ClerkAuthGuard)
   placeorder(
     @Param('barcode') barcode: string,
     @Body('quantity') quantity: number,
