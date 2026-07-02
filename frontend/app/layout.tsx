@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import ThemeProvider from "@/components/theme/theme-provider";
+import SyncUser from "@/components/SyncUser";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       >
         <body>
           <ThemeProvider>
+            <SyncUser />
             {children}
             <Toaster richColors closeButton />
           </ThemeProvider>

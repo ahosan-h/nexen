@@ -19,9 +19,9 @@ export interface Scan {
 
   addedby: string;
 
-  createAt: string;
+  createdAt: string;
 
-  updateAt: string;
+  updatedAt: string;
 }
 
 export interface createScanDto {
