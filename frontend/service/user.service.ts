@@ -3,7 +3,7 @@ import { createUserDto, User } from "@/types/user";
 
 export const UserService = {
   create: (data: createUserDto, token: string) =>
-    apiFetch<User>("/user", {
+    apiFetch<User>("/user/create", {
       method: "POST",
       token,
       body: data,

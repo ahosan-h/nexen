@@ -38,7 +38,7 @@ export default function AddProductPage() {
     console.log("Submitted!", data);
     try {
       if (!isSignedIn) {
-        alert("Please sign in first");
+        toast.error("Please sign in first");
         return;
       }
 
