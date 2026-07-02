@@ -1,62 +1,40 @@
 "use client";
+import { UserService } from "@/service/user.service";
+import { createUserDto } from "@/types/user";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
-//it will verify the user if he is sign-ined or not
+import { useEffect } from "react";
+
 export default function SyncUser() {
-  const { getToken, isSignedIn, isLoaded: clerkLoaded } = useAuth();
+  const { getToken, isSignedIn, isLoaded } = useAuth();
+
   const { user } = useUser();
-  const [isloaded, setIsloaded] = useState(true);
-  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    async function createuser(
-      firstname: string,
-      clerkId: string,
-      email: string,
-      token: string,
-    ) {
-      const senddata = await fetch("http://localhost:3433/nexen/user/create", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          clerkId: clerkId,
-          email: email,
-          username: firstname,
-        }),
-      });
-    }
+    async function syncUser() {
+      if (!isSignedIn || !isLoaded || !user) return;
 
-    async function fetchtoken() {
-      if (clerkLoaded && isSignedIn) {
-        try {
-          const token = await getToken();
-          setToken(token);
-          console.log(token);
-          //extract the name (last name)
-          const firstname = user?.firstName || user?.lastName;
-          const clerkId = user?.id;
-          const email = user?.primaryEmailAddress?.emailAddress;
+      try {
+        const token = await getToken();
 
-          await createuser(firstname, clerkId, email, token);
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setIsloaded(false);
-        }
-      } else if (clerkLoaded && !isSignedIn) {
-        setIsloaded(false);
+        if (!token) return;
+
+        const email = user.primaryEmailAddress?.emailAddress;
+
+        if (!email) return;
+
+        const payload: createUserDto = {
+          clerkId: user.id,
+          email,
+          username: user.username ?? user.firstName ?? user.lastName ?? "User",
+        };
+
+        await UserService.create(payload, token);
+      } catch (error) {
+        console.log(error);
       }
     }
+    syncUser();
+  }, [isLoaded, user, getToken, isSignedIn]);
 
-    fetchtoken();
-  }, [isSignedIn, getToken, clerkLoaded, user]);
-  return {
-    isSignedIn,
-    isLoaded: clerkLoaded && !isloaded,
-    token,
-    username: user,
-  };
+  return null;
 }
