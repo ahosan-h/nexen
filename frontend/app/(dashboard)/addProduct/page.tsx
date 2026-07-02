@@ -181,6 +181,25 @@ export default function AddProductPage() {
             </Field>{" "}
           </FieldGroup>
 
+          <Field>
+            <FieldLabel htmlFor="addedby">Category</FieldLabel>
+
+            <InputGroup>
+              <InputGroupInput
+                id="category"
+                type="text"
+                placeholder="Enter product category"
+                {...register("category", {
+                  required: "Product category is required",
+                })}
+              />
+            </InputGroup>
+
+            {errors.category && (
+              <p className="text-sm text-red-500">{errors.category.message}</p>
+            )}
+          </Field>
+
           <div className="flex flex-col md:flex-row gap-4 ">
             <Field>
               <FieldLabel htmlFor="quantity">Quantity</FieldLabel>

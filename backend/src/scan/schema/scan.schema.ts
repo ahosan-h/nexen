@@ -24,7 +24,7 @@ export class Scan extends Document {
   quantity!: number;
 
   @Prop({ required: true })
-  catagory!: string;
+  category!: string;
 
   @Prop()
   description!: string;

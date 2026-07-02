@@ -17,7 +17,7 @@ export class createScanDto {
   quantity!: number;
 
   @IsString()
-  catagory!: string;
+  category!: string;
 
   @IsString()
   @IsOptional()

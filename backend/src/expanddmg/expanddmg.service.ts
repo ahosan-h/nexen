@@ -12,7 +12,7 @@ export class ExpanddmgService {
     @InjectModel(Scan.name) private readonly scanModel: Model<Scan>,
   ) {}
   //record the expiration report
-  async record_expire(catagory: string, name: string, reportedby: string) {
+  async record_expire(category: string, name: string, reportedby: string) {
     //find if the product  and catagory exists
     const findproduct = await this.scanModel
       .findOne({ name })
@@ -21,12 +21,12 @@ export class ExpanddmgService {
     if (!findproduct) {
       return { message: 'prodcyt not found ' };
     }
-    if (findproduct?.catagory !== catagory) {
+    if (findproduct?.category !== category) {
       return { message: 'catagory doesnt matched of this product ' };
     }
     //if  all okay  record the report
     return this.expireModel.create({
-      catagory: findproduct.catagory,
+      catagory: findproduct.category,
       name,
       reportedby,
     });
