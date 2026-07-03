@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@clerk/nextjs";
 import { ScanService } from "@/service/scan.service";
@@ -17,6 +17,7 @@ import { Files, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
+import { useCurrentUser } from "@/hooks/user.hook";
 
 const BarScanner = dynamic(() => import("@/components/BarScanner"), {
   ssr: false,
@@ -26,6 +27,8 @@ export default function AddProductPage() {
   const [barcode, setBarcode] = useState("");
 
   const { getToken, isSignedIn } = useAuth();
+
+  const { user, loading } = useCurrentUser();
 
   const {
     register,
@@ -57,7 +60,7 @@ export default function AddProductPage() {
         quantity: data.quantity,
         category: data.category,
         description: data.description,
-        addedby: data.addedby,
+        addedby: user?.username ?? "",
       };
 
       console.log("TOKEN:", token);
@@ -75,16 +78,29 @@ export default function AddProductPage() {
         console.log("Status:", error.status);
         console.log("Response:", error.data);
 
-        toast.error(
-          typeof error.data === "object"
-            ? JSON.stringify(error.data)
-            : error.message,
-        );
+        let message = error.message;
+
+        if (
+          typeof error.data === "object" &&
+          error.data !== null &&
+          "message" in error.data
+        ) {
+          const apiMessage = error.data.message;
+
+          message = Array.isArray(apiMessage)
+            ? apiMessage.join(", ")
+            : String(apiMessage);
+        }
+
+        toast.error(message);
       } else {
         console.error(error);
+        toast.error("Something went wrong");
       }
     }
   };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="p-6 flex items-center justify-center ">
@@ -197,7 +213,7 @@ export default function AddProductPage() {
           </FieldGroup>
 
           <Field>
-            <FieldLabel htmlFor="addedby">Category</FieldLabel>
+            <FieldLabel htmlFor="category">Category</FieldLabel>
 
             <InputGroup>
               <InputGroupInput
@@ -242,18 +258,28 @@ export default function AddProductPage() {
 
               <InputGroup>
                 <InputGroupInput
-                  id="selling"
+                  id="addedby"
                   type="text"
-                  placeholder="Enter added by"
-                  {...register("addedby", {
-                    required: "Please enter who added this item",
-                  })}
+                  value={user?.username ?? ""}
+                  readOnly
                 />
-              </InputGroup>
 
-              {errors.addedby && (
-                <p className="text-sm text-red-500">{errors.addedby.message}</p>
-              )}
+                <InputGroupAddon align="inline-end">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={async () => {
+                      if (user?.username) {
+                        await navigator.clipboard.writeText(user.username);
+                        toast.success("Username copied");
+                      }
+                    }}
+                  >
+                    <Files className="size-4" />
+                  </Button>
+                </InputGroupAddon>
+              </InputGroup>
             </Field>
           </div>
 
